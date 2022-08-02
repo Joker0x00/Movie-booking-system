@@ -1,0 +1,63 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+    <link rel="stylesheet" href="{% static 'plugins/bootstrap-3.4.1/css/bootstrap.css' %}">
+    {% block css %}
+    {% endblock %}
+</head>
+<body>
+
+
+<div>
+    <nav class="navbar navbar-default">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+{#                <img src="{% static 'img/1.jpg' %}" style="height: 5vh; width: 5vw;">#}
+                <a class="navbar-brand" href="#">电影订票后台管理系统</a>
+            </div>
+
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                    <li class="" id="c1"><a href="/admin/list">管理员<span class="sr-only">(current)</span></a></li>
+                    <li class="" id="c2"><a href="/admin/movie/list">电影<span class="sr-only">(current)</span></a></li>
+                    <li class="" id="c3"><a href="/admin/theater/list">电影院<span class="sr-only">(current)</span></a></li>
+                    <li class="" id="c4"><a href="/admin/room/list">放映厅<span class="sr-only">(current)</span></a></li>
+                    <li class="" id="c5"><a href="/admin/show/list">放映管理<span class="sr-only">(current)</span></a></li>
+                    <li class="" id="c6"><a href="/admin/order/list">订单管理<span class="sr-only">(current)</span></a></li>
+                    <li class="" id="c7"><a href="/admin/user/list">用户信息<span class="sr-only">(current)</span></a></li>
+
+                </ul>
+
+                <ul class="nav navbar-nav navbar-right">
+                    <li><a href="/index">前台</a></li>
+                    <li class="dropdown">
+                        <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true"
+                           aria-expanded="false">{{ request.session.admin.name }}<span class="caret"></span></a>
+                        <ul class="dropdown-menu">
+                            <li><a href="/admin/{{ request.session.admin.id }}/edit/">我的信息</a></li>
+                            <li><a href="/admin/logout/">注销</a></li>
+                        </ul>
+                    </li>
+                </ul>
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+</div>
+
+<div>
+    {% block content %}{% endblock %}
+</div>
+
+<script src="{% static 'js/jquery-3.6.0.min.js' %}"></script>
+<script src="{% static 'plugins/bootstrap-3.4.1/js/bootstrap.min.js' %}"></script>
+
+{% block js %}
+{% endblock %}
+
+</body>
+</html>

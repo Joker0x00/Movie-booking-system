@@ -1,0 +1,121 @@
+{% extends 'admin_base.html' %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 20px">
+            <a href="/admin/user/add" class="btn btn-success">
+                添加用户
+            </a>
+            <form method="get" action="" class="navbar-form" style="display: inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="输入搜索关键字" name="q" value="{{ q }}">
+                </div>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+                <div style="display: inline; margin-left: 10px">
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio1" value="id"> 放映厅ID
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio2" value="name"> 放映厅名称
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio3" value="tname"> 所属影城
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div>
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 用户列表
+                </div>
+                <div class="panel-body">
+                    <p>
+                        用户信息
+                    </p>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>密码</th>
+                        <th>余额</th>
+                        <th>性别</th>
+                        <th>生日</th>
+                        <th>邮箱</th>
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in objs %}
+                        <tr>
+                            <th scope="row" style="text-align: center">{{ obj.uid }}</th>
+                            <td>{{ obj.uname }}</td>
+                            <td>{{ obj.upassword | striptags | slice:"5" | add:"***" }}</td>
+                            <td>{{ obj.uaccount }}</td>
+                            <td>{{ obj.get_usex_display }}</td>
+                            <td>{{ obj.ubirthday|date:'Y年m月d日' }}</td>
+                            <td>{{ obj.uemail }}</td>
+                            <td>
+                                <a href="/admin/user/{{ obj.uid }}/edit/" class="btn btn-primary">编辑</a>
+                                <a href="/admin/user/{{ obj.uid }}/delete/" class="btn btn-danger">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="text-center">
+            {{ html }}
+        </div>
+
+
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $('th').addClass("text-center");
+        $('td').addClass("text-center");
+        if ({{ c }} == 1
+        )
+        {
+            $('#inlineRadio1').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 2
+        )
+        {
+            $('#inlineRadio2').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 3
+        )
+        {
+            $('#inlineRadio3').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 4
+        )
+        {
+            $('#inlineRadio4').prop('checked', true);
+        }
+
+    </script>
+{% endblock %}

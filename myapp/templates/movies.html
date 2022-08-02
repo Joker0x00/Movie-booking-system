@@ -1,0 +1,139 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <form method="get" action="" class="navbar-form">
+            <div class="panel panel-default">
+                <ul class="list-group">
+                    <li class="list-group-item">
+                        <span>类型: </span>
+                        <div style="display: inline; margin-left: 10px">
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b1" value="">取消选择
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b2" value="1">喜剧
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b3" value="2">爱情
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b4" value="3">动作
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b5" value="4">枪战
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b6" value="5">犯罪
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b7" value="6">悬疑
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b8" value="7">家庭
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b9" value="8">科幻
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b10" value="9">战争
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b11" value="10">青春
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="catid" id="b12" value="11">动画
+                            </label>
+
+                        </div>
+                    </li>
+                    <li class="list-group-item">
+                        <span>地区: </span>
+                        <div style="display: inline; margin-left: 10px">
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a1" value="">取消选择
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a2" value="1">大陆
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a3" value="2">美国
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a4" value="3">韩国
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a5" value="4">日本
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a6" value="5">香港
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a7" value="6">台湾
+                            </label>
+                            <label class="radio-inline">
+                                <input type="radio" name="sourceid" id="a8" value="7">英国
+                            </label>
+                        </div>
+                    </li>
+                </ul>
+            </div>
+
+            <button type="submit" class="btn btn-default">
+                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+            </button>
+        </form>
+        <div class="col-md-8 col-md-offset-2">
+            {% for movie in movieList %}
+                <div class="panel panel-info">
+                    <div class="panel-heading">
+                        <div class="media">
+                            <div class="media-left">
+                                <a href="#">
+                                    <img class="media-object"
+                                         src="\media\{{ movie.mimg }}"
+                                         data-holder-rendered="true" style="width: 160px; height: 220px;">
+                                </a>
+                            </div>
+                            <div class="media-body">
+                                <h3 class="media-heading" style="font-weight: bold">{{ movie.mname }}</h3>
+                                <div class="content" style="margin-top: 20px">
+                                    <p>
+                                        主演: {{ movie.get_mtype_display }}
+                                    </p>
+                                    <p>
+                                        主演: {{ movie.mstar }}
+                                    </p>
+                                    <p>
+                                        {{ movie.mon_info }}
+                                    </p>
+                                    <p>
+                                        <span style="color: #e58c19; font-size: 25px; font-style: italic">
+                                            {% if movie.mremark == 0 %}
+                                                暂无评分
+                                            {% else %}
+                                                {{ movie.mremark }}分
+                                            {% endif %}
+                                        </span>
+                                    </p>
+                                    <p>
+                                        <a href="/select/theater/?mid={{ movie.mid }}" class="btn btn-success" role="button">购票</a>
+                                        <a href="/movies/detail?id={{ movie.mid }}" class="btn btn-info" role="button">详情</a>
+                                    </p>
+                                </div>
+
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+    </div>
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('#c2').addClass('active')
+    </script>
+{% endblock %}

@@ -1,0 +1,125 @@
+{% extends 'admin_base.html' %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 20px">
+            <a href="/admin/show/add" class="btn btn-success">
+                添加放映场次
+            </a>
+            <form method="get" action="" class="navbar-form" style="display: inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="输入搜索关键字" name="q" value="{{ q }}">
+                </div>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+                <div style="display: inline; margin-left: 10px">
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio1" value="id"> 放映厅ID
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio2" value="name"> 放映厅名称
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio3" value="tname"> 所属影城
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div>
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 放映列表
+                </div>
+                <div class="panel-body">
+                    <p>
+                        放映信息
+                    </p>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>电影名称</th>
+                        <th>放映厅名称</th>
+                        <th>所属影院</th>
+                        <th>限票数量</th>
+                        <th>放映日期和时间</th>
+                        <th>票价</th>
+                        <th>售票数量</th>
+                        <th>放映状态</th>
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in objs %}
+                        <tr>
+                            <th scope="row" style="text-align: center">{{ obj.sid }}</th>
+                            <td>{{ obj.mid.mname }}</td>
+                            <td>{{ obj.rid.rname }}</td>
+                            <td>{{ obj.rid.tid.tname}}</td>
+                            <td>{{ obj.smax_sold_ticket }}</td>
+                            <td>{{ obj.stime|date:"Y年m月d日 H:i:s" }}</td>
+                            <td>{{ obj.sprice }}</td>
+                            <td>{{ obj.snum }}</td>
+                            <td>{{ obj.get_sshow_status_display }}</td>
+                            <td>
+                                <a href="/admin/show/{{ obj.sid }}/edit/" class="btn btn-primary">编辑</a>
+                                <a href="/admin/show/{{ obj.sid }}/delete/" class="btn btn-danger">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="text-center">
+            {{ html }}
+        </div>
+
+
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $('th').addClass("text-center");
+        $('td').addClass("text-center");
+        if ({{ c }} == 1
+        )
+        {
+            $('#inlineRadio1').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 2
+        )
+        {
+            $('#inlineRadio2').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 3
+        )
+        {
+            $('#inlineRadio3').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 4
+        )
+        {
+            $('#inlineRadio4').prop('checked', true);
+        }
+
+    </script>
+{% endblock %}

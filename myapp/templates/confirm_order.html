@@ -1,0 +1,145 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/order_confirm.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="mycontainer" id="app">
+
+        <p class="warning">请仔细核对场次信息，出票后将<span class="attention">无法退票和改签</span></p>
+
+        <table class="order-table">
+            <thead>
+            <tr>
+                <th>影片</th>
+                <th>时间</th>
+                <th>影院</th>
+                <th>座位</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td class="movie-name">《{{ show.mid.mname }}》</td>
+                <td class="showtime" id="showtime">{{ show.stime.date }} {{ show.stime.time }}</td>
+                <td class="cinema-name">{{ show.rid.tid.tname }}</td>
+                <td>
+                    <span class="hall">{{ show.rid.rname }}</span>
+                    <div class="seats">
+                        <div>
+                            {% for ticket in tickets %}
+                                <span class="border"><i>{{ ticket.0 }}</i>排<i>{{ ticket.1 }}</i>座</span>
+                            {% endfor %}
+                        </div>
+                        <div>
+                        </div>
+                    </div>
+                </td>
+            </tr>
+            </tbody>
+        </table>
+
+
+        <div class="right">
+            <div class="price-wrapper">
+                <span>实际支付 :</span>
+                <span class="price">{{ total_price }}</span>
+            </div>
+            <div>
+                <a class="btn btn-danger" id="pay-btn">确认支付</a>
+            </div>
+        </div>
+        <h1>{{ form.errors }}</h1>
+
+        <form id="cashierForm" name="cashierForm" method="post" action="/order/add/">
+            {% csrf_token %}
+            <input type="hidden" name="uid" value="{{ request.session.info.id }}">
+            <input type="hidden" name="sid" value="{{ show.sid }}">
+            <input type="hidden" name="oseat" value="{{ tickets }}">
+            <input type="hidden" name="ostatus" value="1">
+        </form>
+
+        <div class="modal-container" name="info-box" style="display: none">
+            <div class="modal" name="info-box" style="display: none; height: 220px">
+                <span class="icon"></span>
+                <div name="tips"></div>
+                <div class="ok-btn btn" id="confirm-btn">我知道了</div>
+            </div>
+        </div>
+
+
+        {#    <div class="modal-container" style="display:none">#}
+        {#        <div class="modal">#}
+        {#            <span class="icon"></span>#}
+        {##}
+        {#            <p class="tip">支付超时，该订单已失效，请重新购买</p>#}
+        {##}
+        {#            <div class="ok-btn btn">我知道了</div>#}
+        {#        </div>#}
+        {#    </div>#}
+
+    </div>
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            change_show_date();
+            $('span[class="border"]').eq(0).removeClass('border');
+            addEvent_submit();
+            addEvent_confirm();
+        });
+
+        function change_show_date() {
+            let date = new Date();
+            now_month = date.getMonth() + 1;
+            now_date = date.getDate();
+            show_month = {{ show.stime.date.month }};
+            show_date = {{ show.stime.date.day }};
+            if (now_month == show_month && now_date == show_date) {
+                $('#showtime').text('今天 {{ show.stime.date }} {{ show.stime.time }}')
+            } else if (now_month == show_month && now_date == show_date - 1) {
+                $('#showtime').text('明天 {{ show.stime.date }} {{ show.stime.time }}')
+            }
+        }
+
+        function addEvent_submit() {
+            $('#pay-btn').click(function () {
+                $.ajax({
+                    url: '/check/order/',
+                    type: 'post',
+                    dataType: 'JSON',
+                    data: {
+                        uid: $('input[name="uid"]').val(),
+                        sid: $('input[name="sid"]').val(),
+                        oseat: $('input[name="oseat"]').val()
+                    },
+                    success: function (res) {
+                        if (res['status'] == 'success') {
+                            $('#cashierForm').submit();
+                        } else {
+                            errors = res['errors'];
+                            info_box = $('div[name="info-box"]')
+                            info_box.css('display', 'block');
+                            $('div[name="tips"]').empty();
+                            for (i in errors) {
+                                $('div[name="tips"]').append('<p class="tip">' + errors[i] + '</p>')
+                            }
+                        }
+                    }
+                })
+
+            });
+        }
+
+        function addEvent_confirm() {
+            $('#confirm-btn').click(function () {
+                $('div[name="info-box"]').css('display', 'none');
+            });
+        }
+
+    </script>
+{% endblock %}

@@ -1,0 +1,102 @@
+{% extends 'admin_base.html' %}
+
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/seat.css' %}">
+    <link rel="stylesheet" href="{% static 'css/order_confirm.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div class="panel panel-success">
+            <div class="panel-heading">
+                <h3 class="panel-title">添加订单</h3>
+            </div>
+            <div class="panel-body">
+                <form method="post" action="/admin/order/add/" id="form">
+                    {% csrf_token %}
+                    <div class="form-group">
+                        <label>电影选择</label>
+                        <select name="movie" class="form-control" placeholder="电影选择" required="">
+                        </select>
+                        <span style="color:red;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>电影院选择</label>
+                        <select name="theater" class="form-control" placeholder="电影院选择" required="">
+                        </select>
+                        <span style="color:red;"></span>
+                    </div>
+                    <div class="form-group">
+                        <label>放映厅选择</label>
+                        <select name="room" class="form-control" placeholder="放映厅选择" required="">
+                        </select>
+                        <span style="color:red;"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label>场次选择</label>
+                        <select name="time" class="form-control" placeholder="场次选择" required="">
+                        </select>
+                        <span style="color:red;"></span>
+                    </div>
+
+                    {% for field in form %}
+                        <div class="form-group">
+                            <label>{{ field.label }}</label>
+                            {{ field }}
+                            <span style="color: red">{{ field.errors.0 }}</span>
+                            {#                        <input type="text" class="form-control" id="inputDepart" placeholder="Department name"#}
+                            {#                               name="title">#}
+                        </div>
+                    {% endfor %}
+
+
+                    <div class="btn btn-default" name="submit">添加</div>
+                </form>
+            </div>
+        </div>
+    </div>
+    <div class="container" style="margin-bottom: 60px">
+        <div class="main clearfix">
+            <div class="hall">
+                <div class="seat-example text-center" style="margin-left: 0px;">
+                    <div class="selectable-example example">
+                        <span>可选座位</span>
+                    </div>
+                    <div class="sold-example example">
+                        <span>不可选座位</span>
+                    </div>
+                </div>
+
+                <div class="seats-block">
+                    <div class="row-id-container">
+                    </div>
+                    <div class="seats-container">
+                        <div class="screen-container">
+                            <div class="screen text-center">银幕中央</div>
+                            <div class="c-screen-line"></div>
+                        </div>
+                        <div class="seats-wrapper"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-container" name="info-box" style="display: none;">
+            <div class="modal" name="info-box" style="display: none; height: 295px;">
+                <span class="icon"></span>
+                <div name="tips"></div>
+                <div class="ok-btn btn" id="confirm-btn">我知道了</div>
+            </div>
+        </div>
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript" src="{% static 'js/addOrder_seat_info.js' %}">
+    </script>
+    <script src="{% static 'js/addOrder.js' %}"></script>
+{% endblock %}

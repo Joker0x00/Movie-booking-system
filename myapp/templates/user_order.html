@@ -1,0 +1,99 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+    <link rel="stylesheet" href="{% static 'css/profile.css' %}">
+{% endblock %}
+
+{% block content %}
+    <div class="info-content clearfix">
+        <div class="orders-container">
+            <div class="profile-title">我的订单</div>
+            {% for order in orders %}
+                <div class="order-box" data-orderid="{{ order.oid }}">
+                    <div class="order-header">
+                        <span class="order-date">下单时间: {{ order.ocreate_time }}</span>
+                        <span class="order-id">订单号: {{ order.oid }}</span>
+                        {% if order.ostatus != 1 %}
+                            <a class="del-order" href="/order/hide/?oid={{ order.oid }}"
+                               data-orderid="{{ order.oid }}"></a>
+                        {% endif %}
+                    </div>
+
+                    <div class="order-body">
+                        <div class="poster">
+                            <img src="/media/{{ order.sid.mid.mimg }}/" style="height: 91px; width: 66px">
+                        </div>
+
+                        <div class="order-content">
+                            <div class="movie-name">《{{ order.sid.mid.mname }}》</div>
+                            <div class="cinema-name">{{ order.sid.rid.tid.tname }}）</div>
+                            <div class="hall-ticket" name="hall-ticket">
+                                <span>{{ order.sid.rid.rname }}</span>
+                                <span name="ticket">{{ order.oseat }}</span>
+                            </div>
+                            <div class="show-time">{{ order.sid.stime }}</div>
+                        </div>
+
+                        <div class="order-price" name="total-price">{{ order.sid.sprice }}</div>
+
+                        <div class="order-status">
+                            {{ order.get_ostatus_display }}
+                        </div>
+
+                        <div class="actions">
+                            <div>
+                                <a href="/order/refund/?oid={{ order.oid }}&user=1" class="order-detail"
+                                   data-act="orders-detail-click"
+                                   data-bid="b_y190atas">退票</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+
+            <div class="orders-pager">
+
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        $(function () {
+            change_ticketShow();
+        });
+
+        function change_ticketShow() {
+            tickets = $('span[name="ticket"]')
+            ticket_num = tickets.length;
+            ticket_halls = $('div[name="hall-ticket"]')
+            console.log(ticket_num)
+            for (let i = 0; i < ticket_num; i++) {
+                ticket = tickets.eq(i);
+                ticket_str = ticket.text();
+                ticket_str = ticket_str.replace(/\[/g, '');
+                ticket_str = ticket_str.replace(/\]/g, '');
+                ticket_str = ticket_str.replace(/ /g, '');
+                ticket_str = ticket_str.replace(/'/g, '');
+                ticket_list = ticket_str.split(',');
+                console.log(ticket_list);
+                let num = ticket_list.length / 2;
+                for (let j = 0; j < num * 2; j += 2) {
+                    ticket_halls.eq(i).append('<span><i>' + ticket_list[j] + '</i> 排<i>' + ticket_list[j + 1] + '</i> 座  </span>')
+                }
+                let price = $('div[name="total-price"]').eq(i).text();
+                $('div[name="total-price"]').eq(i).text('￥' + price * num);
+            }
+            tickets.remove();
+
+        }
+
+        function change_status() {
+
+        }
+    </script>
+{% endblock %}

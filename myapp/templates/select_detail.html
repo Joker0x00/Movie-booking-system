@@ -1,0 +1,142 @@
+{% extends 'base.html' %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        {#        <div style="margin-bottom: 20px">#}
+        {#            <form method="get" action="" class="navbar-form" style="display: inline">#}
+        {#                <div class="form-group">#}
+        {#                    <input type="text" class="form-control" placeholder="输入搜索关键字" name="q" value="{{ q }}">#}
+        {#                </div>#}
+        {#                <button type="submit" class="btn btn-default">#}
+        {#                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>#}
+        {#                </button>#}
+        {#                <div style="display: inline; margin-left: 10px">#}
+        {#                    <label class="radio-inline">#}
+        {#                        <input type="radio" name="query_info" id="inlineRadio1" value="id"> 影院ID#}
+        {#                    </label>#}
+        {#                    <label class="radio-inline">#}
+        {#                        <input type="radio" name="query_info" id="inlineRadio2" value="name"> 影院名称#}
+        {#                    </label>#}
+        {#                    <label class="radio-inline">#}
+        {#                        <input type="radio" name="query_info" id="inlineRadio3" value="location"> 影院名称#}
+        {#                    </label>#}
+        {#                </div>#}
+        {#            </form>#}
+        {#        </div>#}
+
+
+        <div>
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    {#                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 电影院列表#}
+
+                    <h1>{{ movie.mname }}</h1>
+                    <div class="media">
+                        <div class="media-left">
+                            <a href="#">
+                                <img src="/media/{{ movie.mimg }}" style="height: 220px; width: 160px;">
+                            </a>
+                        </div>
+                        <div class="media-body">
+                            <h4 class="media-heading">Top aligned media</h4>
+                            <p>Cras sit amet nibh libero, in gravida nulla. Nulla vel metus scelerisque ante
+                                sollicitudin commodo. Cras purus odio, vestibulum in vulputate at, tempus viverra
+                                turpis. Fusce condimentum nunc ac nisi vulputate fringilla. Donec lacinia congue felis
+                                in faucibus.</p>
+                            <p>Donec sed odio dui. Nullam quis risus eget urna mollis ornare vel eu leo. Cum sociis
+                                natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus.</p>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <p>
+                        电影院信息
+                    </p>
+                </div>
+
+            </div>
+        </div>
+
+
+        <div>
+            <ul id="myTabs" class="nav nav-tabs" role="tablist">
+                {% for time in time_list %}
+                    <li id="li-{{ time }}" role="presentation" class=""><a href="#{{ time }}" role="tab"
+                                                                           id="{{ time }}-tab" data-toggle="tab"
+                                                                           aria-controls="profile">{{ time }}</a></li>
+                {% endfor %}
+
+            </ul>
+            <div id="myTabContent" class="tab-content">
+                {% for time in time_list %}
+                    <div role="tabpanel" class="tab-pane fade" id="{{ time }}" aria-labelledby="home-tab">
+                        <table class="table table-bordered table-hover">
+                            <tbody>
+                            {% for k, v in shows.items %}
+                                {% if time == k %}
+                                    {% for s in v %}
+                                        <tr>
+                                            <td class="text-center">{{ s.stime.time }}开始</td>
+                                            <td class="text-center">{{ s.mlength }}分钟</td>
+                                            <td class="text-center">{{ s.rname }}</td>
+                                            <td class="text-center">
+                                                <span style="color: #de7f1f; font-size: 20px">{{ s.sprice }}</span>
+                                                <span style="color: #de7f1f">元</span>
+                                            </td>
+                                            <td class="text-center">
+                                                <a href="/select/seat/?sid={{ s.sid }}"
+                                                   class="btn btn-danger btn-block">购票</a>
+                                            </td>
+                                        </tr>
+                                    {% endfor %}
+
+
+                                {% endif %}
+
+                            {% endfor %}
+
+
+                            </tbody>
+                        </table>
+                    </div>
+                {% endfor %}
+
+
+            </div>
+        </div>
+
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $('th').addClass("text-center");
+        $('td').addClass("text-center");
+        if ({{ c }} == 1
+        )
+        {
+            $('#inlineRadio1').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 2
+        )
+        {
+            $('#inlineRadio2').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 3
+        )
+        {
+            $('#inlineRadio3').prop('checked', true);
+        }
+        $('#{{ time_list.0 }}').addClass('active');
+        $('#{{ time_list.0 }}').addClass('in');
+        $('#li-{{ time_list.0 }}').addClass('active');
+    </script>
+{% endblock %}

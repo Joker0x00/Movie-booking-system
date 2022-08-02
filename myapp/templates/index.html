@@ -1,0 +1,138 @@
+{% extends 'base.html' %}
+
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-9" style="margin-top: 6vh">
+                <div class="panel panel-danger">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="display: inline">正在热映</h3>
+                        <span>
+                            <span class="glyphicon glyphicon-chevron-right"
+                                  aria-hidden="true" style="float: right"></span>
+                            <a href="/movies/" style="float: right; color: #a94442" id="more">更多</a>
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <div class="row">
+                                {% for movie in now %}
+                                    <div class="col-sm-6 col-md-4">
+                                        <div>
+                                            <div class="thumbnail">
+                                                <img data-src="holder.js/100%x200" alt="100%x200"
+                                                     src="/media/{{ movie.mimg }}"
+                                                     data-holder-rendered="true"
+                                                     style="height: 220px; width: 160px; display: block;">
+                                                <div class="caption text-center">
+                                                    <h5 style="font-weight: bold">{{ movie.mname }}</h5>
+                                                    <h4 style="color:#ffb400">{{ movie.mremark }}分</h4>
+                                                    <p>主演: {{ movie.mstar }}</p>
+                                                    <p>类型: {{ movie.get_mtype_display }}</p>
+                                                    <p>{{ movie.mon_info }}</p>
+
+                                                    <p><a href="#" class="btn btn-primary" role="button">购票</a><a
+                                                            href="#" class="btn btn-default" role="button">详情</a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+                <div class="panel panel-primary">
+                    <div class="panel-heading">
+                        <h3 class="panel-title" style="display: inline">即将上映</h3>
+                        <span>
+                            <span class="glyphicon glyphicon-chevron-right"
+                                  aria-hidden="true" style="float: right"></span>
+                            <a href="/movies/" style="float: right; color: white" id="more">更多</a>
+                        </span>
+                    </div>
+                    <div class="panel-body">
+                        <div>
+                            <div class="row">
+                                {% for movie in upcoming %}
+                                    <div class="col-sm-6 col-md-4">
+                                        <div>
+                                            <div class="thumbnail">
+                                                <img data-src="holder.js/100%x200" alt="100%x200"
+                                                     src="/media/{{ movie.mimg }}"
+                                                     data-holder-rendered="true"
+                                                     style="height: 220px; width: 160px; display: block;">
+                                                <div class="caption text-center">
+                                                    <h5 style="font-weight: bold">{{ movie.mname }}</h5>
+                                                    <p>主演: {{ movie.mstar }}</p>
+                                                    <p>类型: {{ movie.get_mtype_display }}</p>
+                                                    <p>{{ movie.mon_info }}</p>
+
+                                                    <p><a href="#" class="btn btn-primary" role="button">购票</a><a
+                                                            href="#" class="btn btn-default" role="button">详情</a></p>
+                                                </div>
+                                            </div>
+                                        </div>
+
+
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-3" style="margin-top: 6vh">
+                <div class="panel panel-default">
+                    <!-- Default panel contents -->
+                    <div class="panel-heading">今日榜单</div>
+
+                    <!-- Table -->
+                    <table class="table">
+                        <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>电影名</th>
+                            <th>票房</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>Mark</td>
+                            <td>Otto</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">2</th>
+                            <td>Jacob</td>
+                            <td>Thornton</td>
+                        </tr>
+                        <tr>
+                            <th scope="row">3</th>
+                            <td>Larry</td>
+                            <td>the Bird</td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script>
+        $('#c1').addClass('active')
+    </script>
+{% endblock %}

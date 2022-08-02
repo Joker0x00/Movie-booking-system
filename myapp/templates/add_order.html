@@ -1,0 +1,48 @@
+{% extends 'base.html' %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <div class="panel panel-success">
+                    <div class="panel-heading text-center">
+                        <h3 class="panel-title">填写订单信息</h3>
+                    </div>
+                    <div class="panel-body">
+                        <form method="post">
+                            {% csrf_token %}
+                            <div>
+                                <span style="font-size: 17px; font-weight: bold">影院选择:</span>
+                                <select name="room" id="room" class="form-control">
+                                    <option value="0">1</option>
+                                    <option value="1">1</option>
+                                    <option value="2">1</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span style="font-size: 17px; font-weight: bold">时间选择:</span>
+                                <select name="room" id="room" class="form-control">
+                                    <option value="0">1</option>
+                                    <option value="1">1</option>
+                                    <option value="2">1</option>
+                                </select>
+                            </div>
+                            <div>
+                                <span style="font-size: 17px; font-weight: bold">放映厅:</span>
+                                <select name="room" id="room" class="form-control">
+                                    <option value="0">1</option>
+                                    <option value="1">1</option>
+                                    <option value="2">1</option>
+                                </select>
+                            </div>
+                            <button type="submit" class="btn btn-success btn-block">
+                                <span class="glyphicon glyphicon-ok" aria-hidden="true"></span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+{% endblock %}

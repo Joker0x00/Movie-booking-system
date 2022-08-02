@@ -1,0 +1,156 @@
+{% extends 'admin_base.html' %}
+
+{% block css %}
+{% endblock %}
+
+{% block content %}
+    <div class="container">
+        <div style="margin-bottom: 20px">
+            <a href="/admin/order/add" class="btn btn-success">
+                添加订单
+            </a>
+            <form method="get" action="" class="navbar-form" style="display: inline">
+                <div class="form-group">
+                    <input type="text" class="form-control" placeholder="输入搜索关键字" name="q" value="{{ q }}">
+                </div>
+                <button type="submit" class="btn btn-default">
+                    <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                </button>
+                <div style="display: inline; margin-left: 10px">
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio1" value="id"> 放映厅ID
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio2" value="name"> 放映厅名称
+                    </label>
+                    <label class="radio-inline">
+                        <input type="radio" name="query_info" id="inlineRadio3" value="tname"> 所属影城
+                    </label>
+                </div>
+            </form>
+        </div>
+        <div>
+            <div class="panel panel-default">
+                <!-- Default panel contents -->
+                <div class="panel-heading">
+                    <span class="glyphicon glyphicon-th-list" aria-hidden="true"></span> 订单列表
+                </div>
+                <div class="panel-body">
+                    <p>
+                        订单信息
+                    </p>
+                </div>
+
+                <!-- Table -->
+                <table class="table table-bordered table-hover">
+                    <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>用户名</th>
+                        <th>电影名称</th>
+                        <th>放映厅</th>
+                        <th>座位号</th>
+                        <th>数量</th>
+                        <th>影院</th>
+                        <th>订单时间</th>
+                        <th>总金额</th>
+                        <th>订单状态</th>
+{#                        <th>优惠后票价</th>#}
+                        <th>
+                            操作
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for obj in objs %}
+                        <tr>
+                            <th scope="row" style="text-align: center">{{ obj.oid }}</th>
+                            <td>{{ obj.uid.uname }}</td>
+                            <td>{{ obj.sid.mid.mname }}</td>
+                            <td>{{ obj.sid.rid.rname}}</td>
+                            <td name="oseat">{{ obj.oseat }}</td>
+                            <td name="seat-num"></td>
+                            <td>{{ obj.sid.rid.tid.tname }}</td>
+                            <td>{{ obj.ocreate_time|date:"Y年m月d日 H:i:s" }}</td>
+                            <td name="total-price">{{ obj.sid.sprice }}</td>
+                            <td>{{ obj.get_ostatus_display }}</td>
+                            <td>
+                                <a href="/order/refund/?oid={{ obj.oid }}" class="btn btn-primary">退票</a>
+                                <a href="/order/delete/?oid={{ obj.oid }}" class="btn btn-danger">删除</a>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+
+        <div class="text-center">
+            {{ html }}
+        </div>
+
+
+    </div>
+
+{% endblock %}
+
+
+{% block js %}
+    <script type="text/javascript">
+        $('th').addClass("text-center");
+        $('td').addClass("text-center");
+        if ({{ c }} == 1)
+        {
+            $('#inlineRadio1').prop('checked', true);
+        } else
+        if ({{ c }} == 2)
+        {
+            $('#inlineRadio2').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 3
+        )
+        {
+            $('#inlineRadio3').prop('checked', true);
+        }
+        else
+        if ({{ c }} == 4
+        )
+        {
+            $('#inlineRadio4').prop('checked', true);
+        }
+
+    </script>
+
+    <script type="text/javascript">
+        $(function () {
+            change_ticketShow();
+        });
+
+        function change_ticketShow() {
+            let tickets = $('td[name="oseat"]')
+            let ticket_num = tickets.length;
+            let total_price = $('td[name="hall-ticket"]')
+            console.log(ticket_num)
+            for (let i = 0; i < ticket_num; i ++) {
+                ticket = tickets.eq(i);
+                ticket_str = ticket.text();
+                ticket_str = ticket_str.replace(/\[/g, '');
+                ticket_str = ticket_str.replace(/\]/g, '');
+                ticket_str = ticket_str.replace(/ /g, '');
+                ticket_str = ticket_str.replace(/'/g, '');
+                ticket_list = ticket_str.split(',');
+                console.log(ticket_list);
+                let num = ticket_list.length / 2;
+                let price = $('td[name="total-price"]').eq(i).text();
+                $('td[name="total-price"]').eq(i).text('￥' + price * num);
+                $('td[name="seat-num"]').eq(i).text(num);
+            }
+        }
+
+        function change_status() {
+
+        }
+    </script>
+{% endblock %}

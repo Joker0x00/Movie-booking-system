@@ -1,0 +1,285 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block css %}
+    <link rel="stylesheet" href="{% static 'css/seat.css' %}">
+    <link rel="stylesheet" href="{% static 'css/common.css' %}">
+{% endblock %}
+
+{% block content %}
+    <form method="get" action="/order/confirm/" id="form">
+        <div class="container" id="" style="margin-bottom: 20px">
+            <div class="main clearfix">
+                <div class="hall">
+                    <div class="seat-example text-center">
+                        <div class="selectable-example example">
+                            <span>可选座位</span>
+                        </div>
+                        <div class="sold-example example">
+                            <span>已售座位</span>
+                        </div>
+                        <div class="selected-example example">
+                            <span>已选座位</span>
+                        </div>
+                    </div>
+
+                    <div class="seats-block">
+                        <div class="row-id-container">
+                        </div>
+                        <div class="seats-container">
+                            <div class="screen-container">
+                                <div class="screen text-center">银幕中央</div>
+                                <div class="c-screen-line"></div>
+                            </div>
+                            <div class="seats-wrapper"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side">
+                    <div class="movie-info clearfix">
+                        <div class="poster">
+                            <img src="https://p0.pipi.cn/mmdb/25bfd671339c7e8ea33139d0476cb0d92908d.jpg?imageView2/1/w/115/h/158">
+                        </div>
+                        <div class="content">
+                            <p class="name text-ellipsis">{{ obj.mname }}</p>
+                            <div class="info-item">
+                                <span>类型 :</span>
+                                <span class="value">{{ obj.mtype }}</span>
+                            </div>
+                            <div class="info-item">
+                                <span>时长 :</span>
+                                <span class="value">{{ obj.mlength }}分钟</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="show-info">
+                        <div class="info-item">
+                            <span>影院 :</span>
+                            <span class="value text-ellipsis">{{ obj.tname }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span>影厅 :</span>
+                            <span class="value text-ellipsis">{{ obj.rname }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span>版本 :</span>
+                            <span class="value text-ellipsis">国语2D</span>
+                        </div>
+                        <div class="info-item">
+                            <span>场次 :</span>
+                            <span class="value text-ellipsis screen"
+                                  id="date-time">{{ obj.stime.date.month }}月{{ obj.stime.date.day }}日 {{ obj.stime.time }}</span>
+                        </div>
+                        <div class="info-item">
+                            <span>票价 :</span>
+                            <span class="value text-ellipsis">￥{{ obj.sprice }}/张</span>
+                        </div>
+                    </div>
+
+                    <div class="ticket-info">
+                        <div class="no-ticket" style="display: block">
+                            <p class="buy-limit"></p>
+                            <p class="no-selected">请<span>点击左侧</span>座位图选择座位</p>
+                        </div>
+                        <div class="has-ticket" style="display:none">
+                            <span class="text">座位：</span>
+                            <div class="ticket-container">
+                            </div>
+                        </div>
+
+                        <div class="total-price">
+                            <span>总价 :</span>
+                            <span class="price">0</span>
+                        </div>
+                    </div>
+
+                    <div class="confirm-order">
+                        <div class="confirm-btn disable" id="confirm-btn" οnclick="document:confirm-btn.submit();">确认选座
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-container" style="display: none;">
+                <div class="modal">
+                    <span class="icon"></span>
+                    <p class="tip"></p>
+                    <div class="ok-btn btn" id="modal-ok">我知道了</div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <input type="text" class="hidden" name="num" value=""/>
+            <input type="text" class="hidden" name="tickets" value=""/>
+            <input type="text" class="hidden" name="sid" value="{{ obj.sid }}"/>
+        </div>
+    </form>
+
+
+
+
+{% endblock %}
+
+{% block js %}
+    <script type="text/javascript">
+        var ticket_data = {
+            num: 0,
+            tickets: [],
+            sid: ''
+        };
+        $(function () {
+            {#0: 可选#}
+            {#1: 已售#}
+            {#2: 无位置#}
+            let seat_layout = {
+                center_offset: {{ obj.rscreen_offset }}, // 偏移量
+                row: {{ obj.r_row }},
+                col: {{ obj.r_col }},
+                info: '{{ obj.ssold_info}}',
+                max_get_tickets: {{ obj.smax_sold_ticket }}
+            };
+            init(seat_layout);
+            addEvent_add_seat(seat_layout);
+            addEvent_remove_seat();
+            addEvent_alert();
+            addEvent_submit();
+        });
+
+
+        $('#c1').addClass('active');
+
+        function init(seat_layout) {
+            $('p[class="buy-limit"]').text('座位：一次最多选' + seat_layout.max_get_tickets + '个座位')
+            $('.modal .tip').text('一次最多购买' + (seat_layout.max_get_tickets) + '张票');
+            $('.screen-container').css('left', seat_layout.center_offset + 'px');
+
+            for (let i = 0; i < seat_layout.row; i++) {
+                $('.seats-block .seats-wrapper').append('<div class="row" rowid=' + i + '></div>');
+                $('.row-id-container').append('<span class="row-id">' + (i + 1) + '</span>');
+                for (let j = 0; j < seat_layout.col; j++) {
+                    let idx = seat_layout.info[i * seat_layout.col + j];
+                    if (idx == '0') {
+                        $('.seats-block .seats-wrapper .row').eq(i).append('<span class="seat" data-column-id="' + (j + 1) + '" data-row-id="' + (i + 1) + '"></span>');
+                    } else if (idx == '1') {
+                        $('.seats-block .seats-wrapper .row').eq(i).append('<span class="seat sold" data-column-id="' + (j + 1) + '" data-row-id="' + (i + 1) + '"></span>');
+                    } else {
+                        $('.seats-block .seats-wrapper .row').eq(i).append('<span class="seat empty" data-column-id="' + (j + 1) + '" data-row-id="' + (i + 1) + '"></span>');
+                    }
+
+                }
+            }
+
+            w = $('.seats-wrapper').width();
+            if (w > 545) {
+                $('.seats-block .screen-container .screen').css('width', $('.seats-wrapper').width() + 'px');
+            }
+            $('.screen-container').css('left', seat_layout.center_offset + 'px');
+
+            change_show_date();
+        }
+
+        function add_ticket(row, col) {
+            $('.ticket-container').append('<span class="ticket" data-row-id="' + row + '" data-column-id="' + col + '" data-index="' + row + '-' + col + '">' + row + '排' + col + '列</span>');
+        }
+
+        function remove_ticket(row, col) {
+            $('span[class="ticket"][data-row-id=' + row + '][data-column-id=' + col + ']').remove();
+        }
+
+        function get_ticket_num() {
+            num = $('span[class="seat selected"]').length;
+            if (num == 0) {
+                $('.no-ticket').css('display', 'block');
+                $('.has-ticket').css('display', 'none');
+                $('#confirm-btn').addClass('disable');
+            } else {
+                $('.no-ticket').css('display', 'none');
+                $('.has-ticket').css('display', 'block');
+                $('#confirm-btn').removeClass('disable');
+            }
+            return num;
+        }
+
+        function update_price(cnt, price) {
+            let res = (cnt * price).toFixed(2);
+            $('.total-price .price').text(res);
+        }
+
+        function addEvent_remove_seat() {
+            $('.ticket-container').on('click', '.ticket', function () {
+                col = $(this).attr('data-column-id');
+                row = $(this).attr('data-row-id');
+                $(this).remove();
+                $('span[class="seat selected"][data-column-id="' + col + '"][data-row-id="' + row + '"]').removeClass('selected');
+                update_price(get_ticket_num(), {{ obj.sprice }});
+            });
+        }
+
+        function addEvent_add_seat(seat_layout) {
+            $('.seat').click(function () {
+                if ($(this).hasClass('sold')) return;
+                if ($(this).hasClass('empty')) return;
+                let flag = $(this).hasClass('selected');
+                if (!flag) {
+                    if (get_ticket_num() < seat_layout.max_get_tickets) {
+                        $(this).addClass('selected');
+                        update_price(get_ticket_num(), {{ obj.sprice }});
+                        col = $(this).attr('data-column-id');
+                        row = $(this).attr('data-row-id');
+                        add_ticket(row, col);
+                    } else {
+                        $('.modal-container .modal').css('display', 'block');
+                        $('.modal-container').css('display', 'block');
+                    }
+                } else {
+                    row = $(this).attr('data-row-id');
+                    col = $(this).attr('data-column-id');
+                    remove_ticket(row, col);
+                    $(this).removeClass('selected');
+                    update_price(get_ticket_num(), {{ obj.sprice }});
+                }
+            });
+        }
+
+        function addEvent_alert() {
+            $('#modal-ok').click(function () {
+                $('.modal-container .modal').css('display', 'none');
+                $('.modal-container').css('display', 'none');
+            });
+        }
+
+        function change_show_date() {
+            let date = new Date();
+            now_month = date.getMonth() + 1;
+            now_date = date.getDate();
+            show_month = {{ obj.stime.date.month }};
+            show_date = {{ obj.stime.date.day }};
+            if (now_month == show_month && now_date == show_date) {
+                $('#date-time').text('今天 {{ obj.stime.time }}')
+            } else if (now_month == show_month && now_date == show_date - 1) {
+                $('#date-time').text('明天 {{ obj.stime.time }}')
+            }
+        }
+
+        function addEvent_submit() {
+            $('#confirm-btn').click(function () {
+                seats = $('span[class="seat selected"]');
+                seats_info = '';
+                for (let i = 0; i < seats.length; i++) {
+                    row = seats.eq(i).attr('data-row-id');
+                    col = seats.eq(i).attr('data-column-id');
+                    seats_info += row + '-' + col + ' ';
+                }
+                ticket_data.num = seats.length;
+                ticket_data.tickets = seats_info.trim();
+                ticket_data.sid = {{ obj.sid }};
+                $('input[name="num"]').val(ticket_data.num);
+                $('input[name="tickets"]').val(ticket_data.tickets);
+                $('input[name="sid"]').val(ticket_data.sid);
+                $('#form').submit();
+            });
+        }
+    </script>
+{% endblock %}
